@@ -17,9 +17,6 @@ outputs:
   sonar-scanner-binary:
     description: "Absolute path to sonar-scanner binary."
     value: ${{ steps.setup-outputs.outputs.sonar-scanner-binary }}
-  build-wrapper-binary:
-    description: "Absolute path to build-wrapper binary."
-    value: ${{ steps.setup-outputs.outputs.build-wrapper-binary }}
 
 runs:
   using: "composite"
@@ -79,14 +76,6 @@ runs:
         TMP_ZIP_PATH: ${{ runner.temp }}/sonar-scanner.zip
       run: ${GITHUB_ACTION_PATH}/scripts/download.sh -v
 
-    - name: Download and install build-wrapper
-      shell: bash
-      env:
-        DOWNLOAD_URL: ${{ steps.configure_paths.outputs.build-wrapper-url }}
-        INSTALL_PATH: ${{ inputs.installation-path }}
-        TMP_ZIP_PATH: ${{ runner.temp }}/build-wrapper.zip
-      run: ${GITHUB_ACTION_PATH}/scripts/download.sh
-
     - name: Setup action outputs
       id: setup-outputs
       shell: bash
@@ -94,8 +83,6 @@ runs:
         SONAR_HOST_URL: 'https://sonarcloud.io'
         SONAR_SCANNER_DIR: ${{ steps.configure_paths.outputs.sonar-scanner-dir }}
         SONAR_SCANNER_BIN: ${{ steps.configure_paths.outputs.sonar-scanner-bin }}
-        BUILD_WRAPPER_DIR: ${{ steps.configure_paths.outputs.build-wrapper-dir }}
-        BUILD_WRAPPER_BIN: ${{ steps.configure_paths.outputs.build-wrapper-bin }}
       run: |
         source ${GITHUB_ACTION_PATH}/scripts/utils.sh
 
@@ -110,12 +97,4 @@ runs:
         SONAR_SCANNER_BIN=$(realpath "${SONAR_SCANNER_BIN}")
         echo "sonar-scanner-binary=${SONAR_SCANNER_BIN}" >> $GITHUB_OUTPUT
         echo "'sonar-scanner-binary' output set to '${SONAR_SCANNER_BIN}'"
-
-        BUILD_WRAPPER_BIN_DIR=$(realpath "${BUILD_WRAPPER_DIR}")
-        echo "${BUILD_WRAPPER_BIN_DIR}" >> $GITHUB_PATH
-        echo "'${BUILD_WRAPPER_BIN_DIR}' added to the path"
-
-        BUILD_WRAPPER_BIN=$(realpath "${BUILD_WRAPPER_BIN}")
-        echo "build-wrapper-binary=${BUILD_WRAPPER_BIN}" >> $GITHUB_OUTPUT
-        echo "'build-wrapper-binary' output set to '${BUILD_WRAPPER_BIN}'"
         echo "::endgroup::"
