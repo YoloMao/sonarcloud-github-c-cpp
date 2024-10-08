@@ -29,10 +29,8 @@ parse_arguments() {
 
 verify_download_correctness() {
   ACTUAL_SHA=$(sha256sum ${TMP_ZIP_PATH} | awk '{ print $1 }')
-  if [ "${ACTUAL_SHA}" == "${EXPECTED_SHA}" ]; then
-    echo "::error::Checking sha256 failed"
-    exit 1
-  fi
+  test "${ACTUAL_SHA}" = "${EXPECTED_SHA}"
+  check_status "Checking sha256 failed"
 }
 
 download() {
